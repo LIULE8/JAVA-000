@@ -1,0 +1,87 @@
+@startuml
+ header: 内存参数图
+ footer: 内存参数图
+
+package "操作系统" {
+[...]
+[进程1]
+[Java进程]
+}
+
+
+
+package "JVM" {
+component 栈 [
+栈
+配置参数:
+-Xss1M
+]
+component 堆 [
+堆
+配置参数:
+-Xms3G
+-Xmx3G
+]
+component 非堆 [
+非堆
+JDK8默认不限制
+MaxMetaspaceSize
+]
+ Java进程 .-> JVM
+}
+
+package "堆外内存" {
+component NIO [
+NIO
+配置参数:
+-XX:MaxDirectMemorySize=128m
+]
+}
+
+package "a" {
+component 年轻代 [
+年轻代
+配置参数:
+-Xmn2G
+]
+component 老年代 [
+老年代
+]
+ 堆 .--> a
+}
+
+package "b" {
+component 元数据区 [
+元数据区
+]
+component Compressed [
+Compressed
+Class Space
+]
+component CodeCache [
+CodeCache(JIT)
+]
+ 非堆 .--> b
+}
+
+package "c" {
+component 新生儿 [
+新生儿
+]
+component S0 [
+S0
+]
+component S1 [
+S1
+]
+ 年轻代 ---> c
+}
+
+package "方法区" {
+component 常量池 [
+常量池
+]
+ 元数据区 .--> 方法区
+}
+
+@enduml
